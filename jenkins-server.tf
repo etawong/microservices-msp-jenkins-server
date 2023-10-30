@@ -12,18 +12,18 @@ provider "aws" {
 }
 
 resource "aws_instance" "tf-jenkins-server" {
-  ami           = var.ami
-  instance_type = var.instance_type
-  key_name      = var.mykey
+  ami                    = var.ami
+  instance_type          = var.instance_type
+  key_name               = var.mykey
   vpc_security_group_ids = [aws_security_group.tf-jenkins-sec-gr.id]
-  iam_instance_profile = aws_iam_instance_profile.tf-jenkins-server-profile.name
+  iam_instance_profile   = aws_iam_instance_profile.tf-jenkins-server-profile.name
   ebs_block_device {
     device_name = "/dev/xvda"
     volume_type = "gp2"
     volume_size = 16
   }
   tags = {
-    Name = var.jenkins-server-tag
+    Name   = var.jenkins-server-tag
     server = "Jenkins"
   }
   user_data = file("jenkinsdata.sh")
@@ -93,6 +93,15 @@ output "JenkinsDNS" {
   value = aws_instance.tf-jenkins-server.public_dns
 }
 
+output "public_ip" {
+  value = aws_instance.tf-jenkins-server.public_ip
+}
+
 output "JenkinsURL" {
   value = "http://${aws_instance.tf-jenkins-server.public_dns}:8080"
+}
+
+
+output "jenkinsURL" {
+  value = "http://${aws_instance.tf-jenkins-server.public_ip}:8080"
 }
